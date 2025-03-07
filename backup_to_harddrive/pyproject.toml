@@ -3,9 +3,9 @@ requires = ["poetry==1.2.0"]
 build-backend = "poetry.core.masonry.api"
 
 [project]
-name = "package_foobar"
+name = "backup_to_harddrive"
 version = "0.0.1"
-description = "Package foobar description."
+description = "Backup home files to Harddrive on Linux"
 license = { file = "LICENSE" }
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -18,14 +18,14 @@ classifiers = [
 requires-python = ">=3.10"
 
 [project.urls]
-homepage = "https://package.foo.bar"
+homepage = "https://github.com/renn0xtek9/backup_to_harddrive"
 
 [tool.poetry]
-name = "package_foobar"
+name = "backup_to_harddrive"
 version = "0.0.1"
-description = "Package foobar description."
+description = "Backup home files to Harddrive on Linux"
 readme = "README.md"
-authors = ["John Doe <john.doe@foobar.com>"]
+authors = ["Maxime Haselbauer <maxime.haselbauer@googlemail.com>"]
 
 [tool.poetry.dependencies]
 
@@ -42,7 +42,7 @@ jobs=0
 load-plugins="pylint.extensions.docparams"
 fail-under=10.0
 [tool.pylint.messages_control]
-
+disable=[]
 [tool.pylint.format]
 max-line-length=120
 max-args=10

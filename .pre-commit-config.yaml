@@ -28,7 +28,7 @@ repos:
     hooks:
       - id: black
         language_version: python3
-        args: [--preview, --quiet, --config, package_foobar/pyproject.toml]
+        args: [--preview, --quiet, --config, backup_to_harddrive/pyproject.toml]
   - repo: https://github.com/pycqa/flake8
     rev: 3.9.2
     hooks:

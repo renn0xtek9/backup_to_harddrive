@@ -36,6 +36,6 @@
 	},
 	"containerEnv": {
 		"GH_TOKEN": "${localEnv:GH_TOKEN}",
-		"PYTHONPATH": "${workspaceFolder}/package_foobar",
+		"PYTHONPATH": "${workspaceFolder}/backup_to_harddrive",
 	}
 }

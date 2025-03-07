@@ -1,0 +1,19 @@
+name: Continuous Integration
+
+on: [pull_request]
+
+jobs:
+  Ubuntu-22-04-pipeline:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: install
+        run: pip install poetry pre-commit && pre-commit install
+      - name: Format
+        run: pre-commit run --all-files
+      - name: Poetry install
+        run: "cd package_foobar && poetry lock && poetry install"
+      - name: Pylint
+        run: "cd package_foobar && poetry run pylint src tests --msg-template=\"{path}:{line}:{column}: {msg_id} ({symbol}) {msg}\""
+      - name: Code coverage
+        run: cd package_foobar && poetry run pytest --cov=.

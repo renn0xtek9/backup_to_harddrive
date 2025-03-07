@@ -1,0 +1,25 @@
+{
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.defaultInterpreterPath": "/home/vscode/.cache/pypoetry/virtualenvs/package-foobar-4jssprLa-py3.10/bin/python",
+    "python.analysis.extraPaths": [
+        "package_foobar/*",
+    ],
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.poetryPath": "/usr/local/bin/poetry",
+    "python.testing.cwd": "${workspaceFolder}/package_foobar/",
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.autoTestDiscoverOnSaveEnabled": false,
+    "python.testing.pytestPath": "/home/vscode/.cache/pypoetry/virtualenvs/package-foobar-4jssprLa-py3.10/bin/pytest",
+    "pylint.path": [
+        "/home/vscode/.cache/pypoetry/virtualenvs/package-foobar-4jssprLa-py3.10/bin/pylint"
+    ],
+    "pylint.enabled": true,
+    "pylint.interpreter": [
+        "/home/vscode/.cache/pypoetry/virtualenvs/package-foobar-4jssprLa-py3.10/bin/python"
+    ],
+    "pylint.cwd": "${workspaceFolder}/package_foobar/",
+}

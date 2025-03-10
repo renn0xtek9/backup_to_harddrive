@@ -85,9 +85,14 @@ class TestGettingInformation(unittest.TestCase):
             file.write("On")
         self.assertTrue(get_backup_status(backup_status_file))
 
+<<<<<<< HEAD
     @patch("codecs.open", new_callable=mock_open)
     @patch("pathlib.Path.mkdir")
     def test_set_backup_status(self, _, mock_open):
+=======
+    @patch("pathlib.Path.mkdir")
+    def test_set_backup_status(self, _):
+>>>>>>> d24fadf (Use Path from pathlib)
         set_backup_status(False)
         mock_open.assert_called_with(str(get_path_for_backup_status().absolute()), "w+", encoding="utf_8")
         mock_open().write.assert_called_with("Off")

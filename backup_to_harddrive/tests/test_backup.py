@@ -10,12 +10,11 @@ import unittest
 from pathlib import Path
 from unittest.mock import call, mock_open, patch
 
-from backup_to_harddrive.backup import (  # get_rsync_command,; get_restore_script_path,
+from backup_to_harddrive.backup import (
     add_today_as_save_date,
     copy_restore_scripts,
-    create_path_if_necessary,
     get_backup_status,
-    get_destination,
+    get_destination_path,
     get_list_of_harddrive_to_backup,
     get_path_for_backup_status,
     get_path_to_backup_date_list,
@@ -54,14 +53,14 @@ class TestGetListOfHarddriveToBackup(unittest.TestCase):
 
 class TestGettingInformation(unittest.TestCase):
     def test_get_path_to_list_of_harddrives_returns_correct_path(self):
-        self.assertEqual(get_path_to_list_of_harddrives(), HOME + "/.backup/harddrives.txt")
+        self.assertEqual(get_path_to_list_of_harddrives(), Path(HOME + "/.backup/harddrives.txt"))
 
     def test_get_path_to_disk_gives_correct_path(self):
         self.assertEqual(get_path_to_disk("foo"), Path("/media/" + USER + "/foo"))
 
     def test_get_destination(self):
         self.assertEqual(
-            get_destination("foo", "dellPC"),
+            get_destination_path("foo", "dellPC"),
             Path("/media/" + USER + "/foo/Backup/dellPC"),
         )
 
@@ -86,11 +85,16 @@ class TestGettingInformation(unittest.TestCase):
             file.write("On")
         self.assertTrue(get_backup_status(backup_status_file))
 
-    def test_set_backup_status(self):
+    @patch("codecs.open", new_callable=mock_open)
+    @patch("pathlib.Path.mkdir")
+    def test_set_backup_status(self, _, mock_open):
         set_backup_status(False)
-        self.assertFalse(get_backup_status())
+        mock_open.assert_called_with(str(get_path_for_backup_status().absolute()), "w+", encoding="utf_8")
+        mock_open().write.assert_called_with("Off")
+
         set_backup_status(True)
-        self.assertTrue(get_backup_status())
+        mock_open.assert_called_with(str(get_path_for_backup_status().absolute()), "w+", encoding="utf_8")
+        mock_open().write.assert_called_with("On")
 
     def test_get_path_to_backup_date_list(self):
         self.assertTrue(
@@ -98,26 +102,17 @@ class TestGettingInformation(unittest.TestCase):
             Path("/media/" + USER + "/foo/Backup/dellPC/backup_date_liste.txt"),
         )
 
-    def test_create_path_if_necessary(self):
-        temp_path = Path(tempfile.mkdtemp(), "foo", "bar")
-        self.assertFalse(os.path.isdir(str(temp_path.absolute())))
-        create_path_if_necessary(temp_path)
-        self.assertTrue(os.path.isdir(str(temp_path.absolute())))
-
     def test_get_source(self):
         self.assertEqual(get_source(), Path(HOME))
 
 
 class TestAddTodayAsSaveDate(unittest.TestCase):
 
-    @patch("backup_to_harddrive.backup.create_path_if_necessary")
-    @patch("os.path.isfile")
     @patch("codecs.open", new_callable=mock_open)
     @patch("backup_to_harddrive.backup.datetime")
-    def test_add_today_as_save_date_if_file_exist(
-        self, mock_datetime, mock_file, mock_is_file, mock_create_path_if_necessary
-    ):
-        mock_create_path_if_necessary.return_value = None
+    @patch("pathlib.Path.mkdir")
+    @patch("pathlib.Path.is_file")
+    def test_add_today_as_save_date_if_file_exist(self, mock_is_file, _, mock_datetime, mock_file):
         mock_is_file.return_value = True
         mock_datetime.datetime.now.return_value = datetime.datetime(2023, 10, 10)
         mock_datetime.datetime.strftime = datetime.datetime.strftime
@@ -128,14 +123,11 @@ class TestAddTodayAsSaveDate(unittest.TestCase):
         mock_file.assert_called_with(backupdatelistpath, "a", encoding="utf_8")
         mock_file().write.assert_called_with("\n10_10_2023")
 
-    @patch("backup_to_harddrive.backup.create_path_if_necessary")
-    @patch("os.path.isfile")
     @patch("codecs.open", new_callable=mock_open)
     @patch("backup_to_harddrive.backup.datetime")
-    def test_add_today_as_save_date_if_file_does_not_exist(
-        self, mock_datetime, mock_file, mock_is_file, mock_create_path_if_necessary
-    ):
-        mock_create_path_if_necessary.return_value = True
+    @patch("pathlib.Path.mkdir")
+    @patch("pathlib.Path.is_file")
+    def test_add_today_as_save_date_if_file_does_not_exist(self, mock_is_file, _, mock_datetime, mock_file):
         mock_is_file.return_value = False
         mock_datetime.datetime.now.return_value = datetime.datetime(2023, 10, 10)
         mock_datetime.datetime.strftime = datetime.datetime.strftime
@@ -202,7 +194,7 @@ class TestRun(unittest.TestCase):
     @patch("subprocess.Popen")
     @patch("backup_to_harddrive.backup.add_today_as_save_date")
     @patch("backup_to_harddrive.backup.copy_restore_scripts")
-    @patch("os.path.isdir")
+    @patch("pathlib.Path.is_dir")
     # pylint: disable=(too-many-positional-arguments)
     def test_run_backup_enabled(
         self,
@@ -219,7 +211,7 @@ class TestRun(unittest.TestCase):
         mock_get_backup_status.return_value = True
         mock_get_list_of_harddrive_to_backup.return_value = ["disk1"]
         mock_get_path_to_list_of_harddrives.return_value = "/dummy/path/to/harddrives.txt"
-        mock_get_path_to_disk.return_value = "/media/user/disk1"
+        mock_get_path_to_disk.return_value = Path("/media/user/disk1")
         mock_popen.return_value.wait.return_value = None
 
         run()
@@ -238,7 +230,7 @@ class TestRun(unittest.TestCase):
     @patch("subprocess.Popen")
     @patch("backup_to_harddrive.backup.add_today_as_save_date")
     @patch("backup_to_harddrive.backup.copy_restore_scripts")
-    @patch("os.path.isdir")
+    @patch("pathlib.Path.is_dir")
     # pylint: disable=(too-many-positional-arguments)
     def test_run_harddrive_not_mounted(
         self,
@@ -255,7 +247,7 @@ class TestRun(unittest.TestCase):
         mock_get_backup_status.return_value = True
         mock_get_list_of_harddrive_to_backup.return_value = ["disk1"]
         mock_get_path_to_list_of_harddrives.return_value = "/dummy/path/to/harddrives.txt"
-        mock_get_path_to_disk.return_value = "/media/user/disk1"
+        mock_get_path_to_disk.return_value = Path("/media/user/disk1")
         mock_popen.return_value.wait.return_value = None
 
         run()

@@ -40,27 +40,27 @@ def get_rsync_command(source: str, destination: str) -> List[str]:
     return ["rsync"] + RSYNC_OPTIONS + ["--exclude-from", str(EXCLUDE_LIST_FILE_PATH.absolute()), source, destination]
 
 
-def get_list_of_harddrive_to_backup(filepath: str) -> List[str]:
+def get_list_of_harddrive_to_backup(file_path: Path) -> List[str]:
     """Get the list of harddrives to backup.
 
     Args:
-        filepath (str): The path to the file containing the list of harddrives to backup.
+        file_path (Path): The path to the file containing the list of harddrives to backup.
     Returns:
         list: The list of harddrives to backup.
     """
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         harddriveslist = [os.path.basename(line.rstrip("\n")) for line in f]
 
     return harddriveslist
 
 
-def get_path_to_list_of_harddrives() -> str:
+def get_path_to_list_of_harddrives() -> Path:
     """Get the path to the file containing the list of harddrives to backup.
 
     Returns:
         str: The path to the file containing the list of harddrives to backup.
     """
-    return os.path.expanduser("~") + "/.backup/harddrives.txt"
+    return Path.home() / ".backup" / "harddrives.txt"
 
 
 def get_path_to_backup_date_list(diskname: str, hostname: str) -> str:
@@ -88,7 +88,7 @@ def get_path_for_backup_status() -> Path:
     Returns:
         Path: The path to the file containing the backup status.
     """
-    return Path(os.path.expanduser("~"), ".backup", "backup_status.txt")
+    return Path.home() / ".backup" / "backup_status.txt"
 
 
 def get_backup_status(filename=get_path_for_backup_status()) -> bool:
@@ -128,7 +128,7 @@ def get_source() -> Path:
     return Path(os.path.expanduser("~"))
 
 
-def get_destination(diskname: str, hostname: str) -> Path:
+def get_destination_path(diskname: str, hostname: str) -> Path:
     """Get the destination directory to backup to.
 
     Args:
@@ -140,24 +140,14 @@ def get_destination(diskname: str, hostname: str) -> Path:
     return Path(get_path_to_disk(diskname), "Backup", hostname)
 
 
-def create_path_if_necessary(path: str) -> None:
-    """Create a path if it does not exist.
-
-    Args:
-        path (str): The path to create.
-    """
-    if not os.path.isdir(str(path.absolute())):
-        os.makedirs(str(path.absolute()))
-
-
 def set_backup_status(on_or_off: bool) -> None:
     """Set the backup status.
 
     Args:
         on_or_off (bool): The backup status.
     """
-    create_path_if_necessary(get_path_for_backup_status().parent)
-    with codecs.open(str(get_path_for_backup_status().absolute()), "w", encoding="utf_8") as file:
+    get_path_for_backup_status().parent.mkdir(parents=True, exist_ok=True)
+    with codecs.open(str(get_path_for_backup_status().absolute()), "w+", encoding="utf_8") as file:
         if on_or_off:
             file.write("On")
         else:
@@ -172,8 +162,8 @@ def add_today_as_save_date(diskname: str, hostname: str) -> None:
         hostname (str): The hostname of the machine.
     """
     backupdatelistpath = get_path_to_backup_date_list(diskname, hostname)
-    create_path_if_necessary(backupdatelistpath.parent)
-    if not os.path.isfile(backupdatelistpath):
+    backupdatelistpath.parent.mkdir(parents=True, exist_ok=True)
+    if not backupdatelistpath.is_file():
         with codecs.open(backupdatelistpath, "w", encoding="utf_8") as file:
             file.write("List of Backup date")
     with codecs.open(backupdatelistpath, "a", encoding="utf_8") as file:
@@ -187,24 +177,20 @@ def get_restore_script_path() -> Path:
     Returns:
         str: The path to the restore scripts.
     """
-    return Path(SCRIPT_DIR_PATH, "quick_restore_scripts")
+    return Path(SCRIPT_DIR_PATH / "quick_restore_scripts")
 
 
-def copy_restore_scripts(destination: str) -> None:
+def copy_restore_scripts(destination_path: Path) -> None:
     """Copy the restore scripts to the destination.
 
     Args:
-        destination (str): The destination to copy the restore scripts to.
+        destination_path (Path): The destination to copy the restore scripts to.
     """
     restore_script_path = get_restore_script_path()
-    scripts = [
-        Path(restore_script_path, f)
-        for f in os.listdir(restore_script_path)
-        if os.path.isfile(os.path.join(restore_script_path, f))
-    ]
-    for scriptpath in scripts:
-        print(scriptpath)
-        shutil.copy2(scriptpath, destination)
+
+    scripts = [restore_script_path / f for f in restore_script_path.iterdir() if f.is_file()]
+    for script_path in scripts:
+        shutil.copy2(script_path, destination_path)
 
 
 def run() -> None:
@@ -214,14 +200,14 @@ def run() -> None:
 
     hostname = socket.gethostname()
     for diskname in get_list_of_harddrive_to_backup(get_path_to_list_of_harddrives()):
-        if os.path.isdir(get_path_to_disk(diskname)):
-            command = get_rsync_command(str(get_source().absolute()), str(get_destination(diskname, hostname)))
+        if get_path_to_disk(diskname).is_dir():
+            command = get_rsync_command(str(get_source().absolute()), str(get_destination_path(diskname, hostname)))
             print(" ".join(command))
             with subprocess.Popen(command) as spc:
                 spc.wait()
 
             add_today_as_save_date(diskname, hostname)
-            copy_restore_scripts(get_destination(diskname, hostname))
+            copy_restore_scripts(get_destination_path(diskname, hostname))
         else:
             print(f"Harddrive not mounted: {get_path_to_disk(diskname)}")
 

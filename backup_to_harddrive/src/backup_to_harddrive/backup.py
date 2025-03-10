@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Backup to harddrive module."""
-
 import argparse
 import codecs
 import datetime
@@ -10,6 +9,7 @@ import shutil
 import socket
 import subprocess
 from pathlib import Path
+from typing import List
 
 SCRIPT_DIR_PATH = Path(os.path.dirname(os.path.realpath(__file__)))
 RSYNC_OPTIONS = [
@@ -28,7 +28,7 @@ RSYNC_OPTIONS = [
 EXCLUDE_LIST_FILE_PATH = Path(SCRIPT_DIR_PATH, "excludelist.txt")
 
 
-def get_rsync_command(source, destination):
+def get_rsync_command(source: str, destination: str) -> List[str]:
     """Get the rsync command to run.
 
     Args:
@@ -40,7 +40,7 @@ def get_rsync_command(source, destination):
     return ["rsync"] + RSYNC_OPTIONS + ["--exclude-from", str(EXCLUDE_LIST_FILE_PATH.absolute()), source, destination]
 
 
-def get_list_of_harddrive_to_backup(filepath):
+def get_list_of_harddrive_to_backup(filepath: str) -> List[str]:
     """Get the list of harddrives to backup.
 
     Args:
@@ -54,7 +54,7 @@ def get_list_of_harddrive_to_backup(filepath):
     return harddriveslist
 
 
-def get_path_to_list_of_harddrives():
+def get_path_to_list_of_harddrives() -> str:
     """Get the path to the file containing the list of harddrives to backup.
 
     Returns:
@@ -63,7 +63,7 @@ def get_path_to_list_of_harddrives():
     return os.path.expanduser("~") + "/.backup/harddrives.txt"
 
 
-def get_path_to_backup_date_list(diskname, hostname):
+def get_path_to_backup_date_list(diskname: str, hostname: str) -> str:
     """Get the path to the file containing the list of backup dates.
 
     Args:
@@ -82,16 +82,16 @@ def get_path_to_backup_date_list(diskname, hostname):
     )
 
 
-def get_path_for_backup_status():
+def get_path_for_backup_status() -> Path:
     """Get the path to the file containing the backup status.
 
     Returns:
-        str: The path to the file containing the backup status.
+        Path: The path to the file containing the backup status.
     """
     return Path(os.path.expanduser("~"), ".backup", "backup_status.txt")
 
 
-def get_backup_status(filename=get_path_for_backup_status()):
+def get_backup_status(filename=get_path_for_backup_status()) -> bool:
     """Get the backup status.
 
     Args:
@@ -108,27 +108,27 @@ def get_backup_status(filename=get_path_for_backup_status()):
         return True
 
 
-def get_path_to_disk(diskname):
+def get_path_to_disk(diskname: str) -> Path:
     """Get the path to the disk.
 
     Args:
         diskname (str): The name of the disk.
     Returns:
-        str: The path to the disk.
+        Path: The path to the disk.
     """
     return Path("/media/" + getpass.getuser() + "/" + diskname)
 
 
-def get_source():
+def get_source() -> Path:
     """Get the source directory to backup.
 
     Returns:
-        str: The source directory to backup.
+        Path: The source directory to backup.
     """
     return Path(os.path.expanduser("~"))
 
 
-def get_destination(diskname, hostname):
+def get_destination(diskname: str, hostname: str) -> Path:
     """Get the destination directory to backup to.
 
     Args:
@@ -140,7 +140,7 @@ def get_destination(diskname, hostname):
     return Path(get_path_to_disk(diskname), "Backup", hostname)
 
 
-def create_path_if_necessary(path):
+def create_path_if_necessary(path: str) -> None:
     """Create a path if it does not exist.
 
     Args:
@@ -150,7 +150,7 @@ def create_path_if_necessary(path):
         os.makedirs(str(path.absolute()))
 
 
-def set_backup_status(on_or_off):
+def set_backup_status(on_or_off: bool) -> None:
     """Set the backup status.
 
     Args:
@@ -164,7 +164,7 @@ def set_backup_status(on_or_off):
             file.write("Off")
 
 
-def add_today_as_save_date(diskname, hostname):
+def add_today_as_save_date(diskname: str, hostname: str) -> None:
     """Add today as a save date.
 
     Args:
@@ -181,7 +181,7 @@ def add_today_as_save_date(diskname, hostname):
         file.write("\n" + now.strftime("%d_%m_%Y"))
 
 
-def get_restore_script_path():
+def get_restore_script_path() -> Path:
     """Get the path to the restore scripts.
 
     Returns:
@@ -190,7 +190,7 @@ def get_restore_script_path():
     return Path(SCRIPT_DIR_PATH, "quick_restore_scripts")
 
 
-def copy_restore_scripts(destination):
+def copy_restore_scripts(destination: str) -> None:
     """Copy the restore scripts to the destination.
 
     Args:
@@ -207,7 +207,7 @@ def copy_restore_scripts(destination):
         shutil.copy2(scriptpath, destination)
 
 
-def run():
+def run() -> None:
     """Run the backup."""
     if get_backup_status() is False:
         return
@@ -226,7 +226,7 @@ def run():
             print(f"Harddrive not mounted: {get_path_to_disk(diskname)}")
 
 
-def main():
+def main() -> int:
     """Implement main function."""
     parser = argparse.ArgumentParser(description="Script that performs backup of home directory")
     parser.add_argument("--switch-on", help="Switch the backup functionality on", action="count")

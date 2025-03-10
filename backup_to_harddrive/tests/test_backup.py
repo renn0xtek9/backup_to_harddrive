@@ -32,7 +32,7 @@ HOME = os.getenv("HOME")
 USER = os.getenv("USER")
 
 
-def create_a_dummy_harddrives_file(filepath):
+def create_a_dummy_harddrives_file(filepath: str) -> None:
     """Create a dummy harddrives file."""
     with codecs.open(filepath, "w", encoding="utf_8") as file:
         file.write("foo\n")

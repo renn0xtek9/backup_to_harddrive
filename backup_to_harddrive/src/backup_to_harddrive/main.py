@@ -19,7 +19,7 @@ def main() -> int:
         help="Perform dry run (Displays rsync commands without execution)",
         action="count",
         required=False,
-        default=1,
+        default=0,
     )
     parser.add_argument("--switch-on", help="Switch the backup functionality on", action="count")
     parser.add_argument("--switch-off", help="Switch the backup functionality off", action="count")

@@ -5,6 +5,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, call, patch
 
 from backup_to_harddrive.backup_from_config import (
+    create_restore_script_for,
+    create_restore_scripts_from_config,
     get_list_of_rsync_command_for_this_run_configuration,
     run_backup_from_config_file,
     write_timetsamp_on_harddrive,
@@ -24,11 +26,13 @@ class TestGetListOfRsyncCommandForThisRunConfiguration(unittest.TestCase):
                     source=Path("/home/src1"),
                     list_of_harddrive=[Path("/media/HD1"), Path("/media/HD1")],
                     list_of_excluded_folders=[Path(".cache"), Path(".local")],
+                    quick_restore_path=[],
                 ),
                 BackupConfig(
                     source=Path("/opt/src2"),
                     list_of_harddrive=[Path("/mnt/HD1")],
                     list_of_excluded_folders=[],
+                    quick_restore_path=[],
                 ),
             ]
         )
@@ -46,7 +50,12 @@ class TestRunBackupFromConfig(unittest.TestCase):
         mock_get_commands.return_value = [["rsync", "foo", "bar"], ["rsync", "foo2", "bar2"]]
         mock_extract.return_value = RunConfig(
             backup_configs=[
-                BackupConfig(source=Path(), list_of_harddrive=[Path("/media/foo")], list_of_excluded_folders=[])
+                BackupConfig(
+                    source=Path(),
+                    list_of_harddrive=[Path("/media/foo")],
+                    list_of_excluded_folders=[],
+                    quick_restore_path=[],
+                ),
             ]
         )
         mock_process_1 = MagicMock()
@@ -90,3 +99,45 @@ class TestWriteTimetsampOnHarddrive(unittest.TestCase):
         write_timetsamp_on_harddrive(Path("/media/foo"))
         mock_open.assert_called_once_with(Path("/media/foo/Backup/timestamp.txt"), "w", encoding="utf-8")
         mock_file.write.assert_called_once()
+
+
+class TestCreateRestoreScriptFor(unittest.TestCase):
+
+    @patch("builtins.open", new_callable=MagicMock)
+    @patch("backup_to_harddrive.backup_from_config.path_to_backup_within_harddrive")
+    def test_create_restore_script_for(self, _, mock_file):
+        quick_restore_path = Path("/home/foo/Documents")
+        hard_drive_path = Path("/media/hd1")
+        source_path = Path("/home/foo")
+
+        create_restore_script_for(quick_restore_path, hard_drive_path, source_path)
+
+        # pylint: disable=(unnecessary-dunder-call)
+        mock_file.assert_has_calls(
+            [
+                call().__enter__(),
+                call()
+                .__enter__()
+                .write("#!/bin/bash\nset -euxo pipefail\nrsync -avc --delete foo/Documents /home/foo\n"),
+                call().__exit__(None, None, None),
+            ]
+        )
+
+
+class TestCreateRestoreScriptsFromConfig(unittest.TestCase):
+    @patch("backup_to_harddrive.backup_from_config.create_restore_script_for")
+    def test_create_restore_scripts_from_config(self, mock_create_restore_script_for):
+        create_restore_scripts_from_config(
+            BackupConfig(
+                source=Path("/home/foo"),
+                list_of_harddrive=[Path("/media/hd1")],
+                list_of_excluded_folders=[],
+                quick_restore_path=[Path("/home/foo/Documents"), Path("/home/foo/Pictures")],
+            )
+        )
+        mock_create_restore_script_for.assert_has_calls(
+            [
+                call(Path("/home/foo/Documents"), Path("/media/hd1"), Path("/home/foo")),
+                call(Path("/home/foo/Pictures"), Path("/media/hd1"), Path("/home/foo")),
+            ]
+        )

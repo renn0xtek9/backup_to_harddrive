@@ -2,6 +2,7 @@
 
 import datetime
 import logging
+import os
 import socket
 import subprocess
 from pathlib import Path
@@ -9,6 +10,7 @@ from typing import List
 
 # from backup_to_harddrive.backup import RSYNC_OPTIONS
 from backup_to_harddrive.config import (
+    BackupConfig,
     RunConfig,
     extract_valid_configuration_from_config_file,
 )
@@ -96,7 +98,40 @@ def run_backup_from_config_file(dry_run=False) -> None:
         for backup_config in run_config.backup_configs:
             for harddrive in backup_config.list_of_harddrive:
                 write_timetsamp_on_harddrive(harddrive)
+            create_restore_scripts_from_config(backup_config)
     else:
         logging.info("Dry run mode enabled. The following commands would be executed")
         for cmd in rsync_commands:
             print(" ".join(cmd))
+
+
+def create_restore_script_for(quick_restore_path: Path, hard_drive_path: Path, source_path: Path) -> None:
+    """Create a restore script for a quick restore path.
+
+    Args:
+        quick_restore_path [Path]: The quick restore path.
+        hard_drive_path [Path]: The hard drive path.
+        source_path [Path]: The source path.
+    """
+    relative_part = quick_restore_path.relative_to(source_path)
+    restore_script_path = path_to_backup_within_harddrive(hard_drive_path) / f"restore_{relative_part}.sh"
+    with open(restore_script_path, "w", encoding="utf-8") as file:
+        file.write(
+            f"""#!/bin/bash
+set -euxo pipefail
+rsync -avc --delete {str(source_path.name)+os.sep+str(relative_part)} {str(source_path)}
+"""
+        )
+    restore_script_path.chmod(restore_script_path.stat().st_mode | 0o755)
+
+
+def create_restore_scripts_from_config(backup_config: BackupConfig) -> None:
+    """Create restore scripts from a backup configuration.
+
+    Args:
+        backup_config [BackupConfig]: The backup configuration.
+    """
+    logging.warning("Creating restore scripts")
+    for hard_drive in backup_config.list_of_harddrive:
+        for restore_path in backup_config.quick_restore_path:
+            create_restore_script_for(restore_path, hard_drive, backup_config.source)

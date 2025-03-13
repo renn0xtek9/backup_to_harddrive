@@ -44,6 +44,10 @@ backup_configurations:
      - .cache
 ```
 
+## Use cases
+
+See [USECASES.md](USECASES.md)
+
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+See [CONTRIBUTING.md](../CONTRIBUTING.md)

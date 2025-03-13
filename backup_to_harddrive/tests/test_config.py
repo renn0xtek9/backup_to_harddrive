@@ -22,6 +22,9 @@ backup_configurations:
     list_of_excluded_folders:
       - ".cache"
       - "/home/foo/.local"
+    quick_restore_path:
+      - Documents
+      - Downloads
   backup_of_bar:
     source: /home/foo/bar
     list_of_harddrive:
@@ -106,6 +109,61 @@ backup_configurations:
 EMPTY_FILE = """
 """
 
+ONE_RESTORE_PATH = """
+backup_configurations:
+  backup_of_foo:
+    source: /home/foo
+    list_of_harddrive:
+      - /media/foo
+      - /media/bar
+    list_of_excluded_folders:
+      - ".cache"
+      - ".local"
+    quick_restore_path:
+      - Documents
+"""
+
+ONE_EMPTY_RESTORE_PATH = """
+backup_configurations:
+  backup_of_foo:
+    source: /home/foo
+    list_of_harddrive:
+      - /media/foo
+      - /media/bar
+    list_of_excluded_folders:
+      - ".cache"
+      - ".local"
+    quick_restore_path:
+"""
+
+QUICK_RESTORE_PATH_OUTSIDE_OF_SOURCE = """
+backup_configurations:
+  backup_of_foo:
+    source: /home/foo
+    list_of_harddrive:
+      - /media/foo
+      - /media/bar
+    list_of_excluded_folders:
+      - ".cache"
+      - ".local"
+    quick_restore_path:
+      - "/home/bar/Documents"
+"""
+
+QUICK_RESTORE_PATH_ABSOLUTE_INSIDE_SOURCE = """
+backup_configurations:
+  backup_of_foo:
+    source: /home/foo
+    list_of_harddrive:
+      - /media/foo
+      - /media/bar
+    list_of_excluded_folders:
+      - ".cache"
+      - ".local"
+    quick_restore_path:
+      - "/home/foo/Documents"
+"""
+
 
 class TestConfig(unittest.TestCase):
     @patch("pathlib.Path.exists", return_value=False)
@@ -185,6 +243,7 @@ class TestReadConfigFromYaml(unittest.TestCase):
             self.assertEqual(backup_foo.source, Path("/home/foo"))
             self.assertEqual(backup_foo.list_of_harddrive, [Path("/media/foo"), Path("/media/bar")])
             self.assertEqual(backup_foo.list_of_excluded_folders, [Path("/home/foo/.cache"), Path("/home/foo/.local")])
+            self.assertEqual(backup_foo.quick_restore_path, [Path("/home/foo/Documents"), Path("/home/foo/Downloads")])
 
             backup_bar = config.backup_configs[1]
             self.assertEqual(backup_bar.source, Path("/home/foo/bar"))
@@ -206,6 +265,17 @@ class TestReadConfigFromYaml(unittest.TestCase):
             ["One harddrive not mounted", 1, 0, 1, Path("/media/foo"), ONE_ENTRY_YAML_FILE],
             ["No harddrive mounted", 0, 0, 3, [Path("/media/foo"), Path("/media/bar")], ONE_ENTRY_YAML_FILE],
             ["Excluded outside of source", 1, 1, 0, Path("None"), EXCLUDED_FILE_OUTSIDE_OF_SOURCE],
+            ["One quick restore path", 1, 0, 0, Path("None"), ONE_RESTORE_PATH],
+            ["One empty restore path", 1, 1, 0, Path("None"), ONE_EMPTY_RESTORE_PATH],
+            ["One restore path outside of source", 1, 1, 0, Path("None"), QUICK_RESTORE_PATH_OUTSIDE_OF_SOURCE],
+            [
+                "Restore path absolute inside of source",
+                1,
+                0,
+                0,
+                Path("None"),
+                QUICK_RESTORE_PATH_ABSOLUTE_INSIDE_SOURCE,
+            ],
         ]
     )
     @patch("logging.warning")

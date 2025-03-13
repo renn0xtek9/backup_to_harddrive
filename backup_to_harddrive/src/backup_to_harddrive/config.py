@@ -17,6 +17,7 @@ class BackupConfig:
     source: Path
     list_of_harddrive: List[Path]
     list_of_excluded_folders: List[Path]
+    quick_restore_path: List[Path]
 
 
 @dataclass
@@ -132,6 +133,37 @@ def populate_config_with_valid_excluded_folders(config_dict: dict, backup: str, 
         pass
 
 
+def populate_config_with_valid_quick_restore_path(config_dict: dict, backup: str, backup_config: BackupConfig) -> None:
+    """Populate the backup configuration with valid quick restore path.
+
+    Args:
+        config_dict (dict): Dictionary containing the configuration data (read from a YAML file for example).
+        backup (str): Key to look for in the dictionary.
+        backup_config (BackupConfig): Backup configuration to populate.
+    """
+    try:
+        listed_quick_restore_path = config_dict["backup_configurations"][backup]["quick_restore_path"]
+        if listed_quick_restore_path is None:
+            logging.warning(" 'quick_restore_path' specified but empty for configuration: %s", backup)
+        else:
+            for quick_restore_path in listed_quick_restore_path:
+                quick_restore_path = Path(quick_restore_path)
+                if not quick_restore_path.is_absolute():
+                    backup_config.quick_restore_path.append(backup_config.source / quick_restore_path)
+                else:
+                    if quick_restore_path.is_relative_to(backup_config.source):
+                        backup_config.quick_restore_path.append(quick_restore_path)
+                    else:
+                        logging.warning(
+                            "Quick restore path: %s is not a subpath of source: %s for configuration: %s",
+                            str(quick_restore_path),
+                            str(backup_config.source),
+                            backup,
+                        )
+    except KeyError:
+        pass
+
+
 def extract_valid_configuration_from_configuration_dict(config_dict: dict) -> BackupConfig:
     """Extract valid configuration from a dictionary.
 
@@ -146,7 +178,9 @@ def extract_valid_configuration_from_configuration_dict(config_dict: dict) -> Ba
         return run_config
 
     for backup in config_dict["backup_configurations"]:
-        backup_config = BackupConfig(source=Path(), list_of_harddrive=[], list_of_excluded_folders=[])
+        backup_config = BackupConfig(
+            source=Path(), list_of_harddrive=[], list_of_excluded_folders=[], quick_restore_path=[]
+        )
         if not is_populating_config_with_valid_source_successful(config_dict, backup, backup_config):
             continue
         if not is_populating_config_with_at_least_one_valid_list_of_harddrive_successful(
@@ -154,6 +188,7 @@ def extract_valid_configuration_from_configuration_dict(config_dict: dict) -> Ba
         ):
             continue
         populate_config_with_valid_excluded_folders(config_dict, backup, backup_config)
+        populate_config_with_valid_quick_restore_path(config_dict, backup, backup_config)
         run_config.backup_configs.append(backup_config)
     return run_config
 

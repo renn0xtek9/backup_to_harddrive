@@ -12,8 +12,8 @@ jobs:
       - name: Format
         run: pre-commit run --all-files
       - name: Poetry install
-        run: "cd package_foobar && poetry lock && poetry install"
+        run: "cd backup_to_harddrive && poetry lock && poetry install"
       - name: Pylint
-        run: "cd package_foobar && poetry run pylint src tests --msg-template=\"{path}:{line}:{column}: {msg_id} ({symbol}) {msg}\""
+        run: "cd backup_to_harddrive && poetry run pylint src tests --msg-template=\"{path}:{line}:{column}: {msg_id} ({symbol}) {msg}\""
       - name: Code coverage
-        run: cd package_foobar && poetry run pytest --cov=.
+        run: cd backup_to_harddrive && poetry run pytest --cov=.

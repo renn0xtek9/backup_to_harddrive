@@ -5,7 +5,31 @@
             "type": "shell",
             "command": "poetry lock && poetry install",
             "options": {
-                "cwd": "${workspaceFolder}/package_foobar"
+                "cwd": "${workspaceFolder}/backup_to_harddrive"
+            }
+        },
+        {
+            "label": "Mypy",
+            "type": "shell",
+            "command": "poetry run mypy --warn-unreachable src tests",
+            "options": {
+                "cwd": "${workspaceFolder}/backup_to_harddrive"
+            }
+        },
+        {
+            "label": "Flake8",
+            "type": "shell",
+            "command": "poetry run flake8 src tests",
+            "options": {
+                "cwd": "${workspaceFolder}/backup_to_harddrive"
+            }
+        },
+        {
+            "label": "Tryceratops",
+            "type": "shell",
+            "command": "poetry run tryceratops src tests",
+            "options": {
+                "cwd": "${workspaceFolder}/backup_to_harddrive"
             }
         },
         {
@@ -13,7 +37,7 @@
             "type": "shell",
             "command": "poetry run pylint src tests --msg-template=\"{path}:{line}:{column}: {msg_id} ({symbol}) {msg}\"",
             "options": {
-                "cwd": "${workspaceFolder}/package_foobar"
+                "cwd": "${workspaceFolder}/backup_to_harddrive"
             }
         },
         {
@@ -21,7 +45,7 @@
             "type": "shell",
             "command": "poetry run pytest --cov=. --cov-report html:${workspaceFolder}/output/coverage_report/",
             "options": {
-                "cwd": "${workspaceFolder}/package_foobar"
+                "cwd": "${workspaceFolder}/backup_to_harddrive"
             }
         },
         {
@@ -29,7 +53,7 @@
             "type": "shell",
             "command": "poetry run black --config pyproject.toml --check .",
             "options": {
-                "cwd": "${workspaceFolder}/package_foobar"
+                "cwd": "${workspaceFolder}/backup_to_harddrive"
             }
         },
         {

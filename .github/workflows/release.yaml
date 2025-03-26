@@ -8,8 +8,8 @@ on:
       - master
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  Release pipeline:
+    runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1

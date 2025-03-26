@@ -8,8 +8,8 @@ on:
       - master
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  Release-pipeline:
+    runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1
@@ -23,8 +23,9 @@ jobs:
         run: "cd backup_to_harddrive && poetry run pylint src tests --msg-template=\"{path}:{line}:{column}: {msg_id} ({symbol}) {msg}\""
       - name: Code coverage
         run: cd backup_to_harddrive && poetry run pytest --cov=.
+      - name: Build package
+        run: cd backup_to_harddrive && poetry build
+      # - name: Bump version
+      #   run: cd backup_to_harddrive && poetry version patch
       - name: Publish package
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_TOKEN }}
+        run: cd backup_to_harddrive && poetry publish --username __token__  --password ${{ secrets.PYPI_TOKEN }}

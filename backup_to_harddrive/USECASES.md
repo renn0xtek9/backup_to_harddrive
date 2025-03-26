@@ -84,3 +84,21 @@ rsync -avc --delete Development /home/foo
 
 * The script `/media/foo/hd1/Backup/$(hostname)/restore_Documents.sh` shall have
 execution permission set.
+
+## UC5: write time stamp of last successful backup
+
+* Given a config file like this `~/.config/backup_to_harddrive/config.yaml`
+
+```yaml
+backup_configurations:
+  my_backup:
+    source: /home/foo
+    list_of_harddrive:
+      - /media/foo/hd1
+    quick_restore_path:
+      - Documents
+```
+
+* Running `backup_to_harddrive` shall write or overwrite a file
+`/media/foo/hd1/Backup/timestamp.txt` that contains the timestamp of the backup
+ after successful execution.

@@ -102,3 +102,33 @@ backup_configurations:
 * Running `backup_to_harddrive` shall write or overwrite a file
 `/media/foo/hd1/Backup/timestamp.txt` that contains the timestamp of the backup
  after successful execution.
+
+## UC6: (NOT IMPLEMENTED) warn the user if rsync is not installed
+
+* Given a Linux system were `rsync` is not found in the path.
+
+* And given a valid configuration like this
+
+```yaml
+backup_configurations:
+  my_backup:
+    source: /home/foo
+    list_of_harddrive:
+      - /media/foo/hd1
+    quick_restore_path:
+      - Documents
+```
+
+* When the user issue `backup_to_harddrive`
+  * Then an error message `"Rsync not found in path ! Consider installing rsync
+   with sudo apt-get install rsync"` shall appear
+  * And then no rsync command shall be issue
+  * And then backup timestamp shall not be updated
+* When the user issue `backup_to_harddrive --switch-on`
+  * Then a warning message "Rsync not found in path ! Consider installing rsync
+   with sudo apt-get install rsync"` shall appear
+  * And then the backup status shall be switch to on
+* When the user issue `backup_to_harddrive --switch-off`
+  * Then a warning message "Rsync not found in path ! Consider installing rsync
+   with sudo apt-get install rsync"` shall appear
+  * And then the backup status shall be switch to on

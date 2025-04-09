@@ -3,13 +3,19 @@
 This script can typically be trigger when you want to backup files from your
 home folder to one or more backup path (e.g harddrives.)
 
+## Installation
+
+- On Ubuntu 22: `pip install backup_to_harddrive`
+- On Ubuntu 24: `pipx install backup_to_harddrive`
+
 ## Targeted platform
 
-| Platform       | Implemented |
-|----------------|--------------------|
-| Linux          | [ x ]  |
-| Windows        | [ ] |
-| macOS          | []  |
+| Platform       | Implemented | Validation |
+|----------------|--------------------| ----|
+| Linux (Ubuntu 22)         | [x]  | [ci.yaml](../.github/workflows/ci.yaml#L20)|
+| Linux (Ubuntu 24)         | [x]  | [u24-validation.yaml](../.github/workflows/u24-validation.yaml#L20) |
+| Windows        | [] | NA |
+| macOS          | []  | NA |
 
 ## Features included
 

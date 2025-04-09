@@ -1,0 +1,22 @@
+name: Ubuntu 24 validation pipeline
+
+on: [pull_request]
+
+jobs:
+  Ubuntu-24-04-pipeline:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install pipx
+        run: apt install pipx
+      - name: install
+        run: pipx install poetry
+      - name: Poetry install
+        run: "cd backup_to_harddrive && poetry lock && poetry install"
+      - name: Build wheel
+        run: "cd backup_to_harddrive && poetry build"
+      - name: Installing wheel
+        run: "cd backup_to_harddrive && pipx install dist/backup_to_harddrive-*.whl"
+      - name: Smoke test
+        run: cd ~ && backup_to_harddrive --help
+      -

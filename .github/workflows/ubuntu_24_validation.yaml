@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install pipx
-        run: apt install pipx
+        run: sudo apt install pipx
       - name: install
         run: pipx install poetry
       - name: Poetry install
@@ -19,4 +19,3 @@ jobs:
         run: "cd backup_to_harddrive && pipx install dist/backup_to_harddrive-*.whl"
       - name: Smoke test
         run: cd ~ && backup_to_harddrive --help
-      -

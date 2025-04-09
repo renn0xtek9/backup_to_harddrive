@@ -24,11 +24,12 @@ homepage = "https://github.com/renn0xtek9/backup_to_harddrive"
 name = "backup_to_harddrive"
 version = "0.0.2"
 description = "Backup home files to Harddrive on Linux"
-readme = "README.md"
+readme = "./../README.md"
 authors = ["Maxime Haselbauer <maxime.haselbauer@googlemail.com>"]
 
 [tool.poetry.dependencies]
 PyYAML = "6.0.2"
+platformdirs="^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest="^8.2.2"
@@ -38,7 +39,6 @@ mypy="^1.15.0"
 flake8="^7.1.2"
 tryceratops="^2.4.1"
 parameterized="0.9.0"
-platformdirs="^3.0.0"
 
 [tool.poetry.scripts]
 backup_to_harddrive = "backup_to_harddrive.main:main"

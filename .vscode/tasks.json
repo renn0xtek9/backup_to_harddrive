@@ -9,6 +9,14 @@
             }
         },
         {
+            "label": "Build package",
+            "type": "shell",
+            "command": "poetry build",
+            "options": {
+                "cwd": "${workspaceFolder}/backup_to_harddrive"
+            }
+        },
+        {
             "label": "Mypy",
             "type": "shell",
             "command": "poetry run mypy --warn-unreachable src tests",

@@ -12,6 +12,7 @@ You can check code coverage in `output/coverage_report/index.html`
 - Format everything in the repository: use the **Format everything** task of VSCode.
 - Use GUI for testing: `Ctrl+Shift+P` *"Python: Select Interpreter"*,
 use the one from `.cache/pypoetry/...`
+- Build a wheel package: use the **Build package** task of VSCode.
 - Create a new release:
   - `cd backup_to_harddrive/ && poetry version patch`
   - note the new version number in [pyproject.toml](backup_to_harddrive/pyproject.toml#L7)

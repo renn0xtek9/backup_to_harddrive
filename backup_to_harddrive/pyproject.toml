@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "backup_to_harddrive"
-version = "0.0.2"
+version = "0.0.3"
 description = "Backup home files to Harddrive on Linux"
 license = { file = "LICENSE" }
 classifiers = [
@@ -22,7 +22,7 @@ homepage = "https://github.com/renn0xtek9/backup_to_harddrive"
 
 [tool.poetry]
 name = "backup_to_harddrive"
-version = "0.0.2"
+version = "0.0.3"
 description = "Backup home files to Harddrive on Linux"
 readme = "./../README.md"
 authors = ["Maxime Haselbauer <maxime.haselbauer@googlemail.com>"]

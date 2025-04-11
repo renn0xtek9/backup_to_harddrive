@@ -12,10 +12,10 @@ home folder to one or more backup path (e.g harddrives.)
 
 | Platform       | Implemented | Validation |
 |----------------|--------------------| ----|
-| Linux (Ubuntu 22)         | [x]  | [ci.yaml](../.github/workflows/ci.yaml#L20)|
-| Linux (Ubuntu 24)         | [x]  | [u24-validation.yaml](../.github/workflows/u24-validation.yaml#L20) |
-| Windows        | [] | NA |
-| macOS          | []  | NA |
+| Linux (Ubuntu 22)         | ✅ | [ci.yaml](../.github/workflows/ci.yaml#L20)|
+| Linux (Ubuntu 24)         | ✅ | [u24-validation.yaml](../.github/workflows/u24-validation.yaml#L20) |
+| Windows        | ❌ | NA |
+| macOS          | ❌ | NA |
 
 ## Features included
 

@@ -118,7 +118,7 @@ class TestCreateRestoreScriptFor(unittest.TestCase):
                 call().__enter__(),
                 call()
                 .__enter__()
-                .write("#!/bin/bash\nset -euxo pipefail\nrsync -avc --delete foo/Documents /home/foo\n"),
+                .write("#!/bin/bash\nset -euxo pipefail\nrsync -av --delete foo/Documents /home/foo\n"),
                 call().__exit__(None, None, None),
             ]
         )

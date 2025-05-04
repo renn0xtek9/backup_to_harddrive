@@ -16,17 +16,12 @@ from backup_to_harddrive.config import (
 )
 
 RSYNC_OPTIONS = [
+    "-av",
     "--mkpath",
     "--delete",
     "--delete-before",
     "--update",
     "--progress",
-    "-t",
-    "-a",
-    "-r",
-    "-v",
-    "-E",
-    "-c",
     "-h",
 ]
 
@@ -119,7 +114,7 @@ def create_restore_script_for(quick_restore_path: Path, hard_drive_path: Path, s
         file.write(
             f"""#!/bin/bash
 set -euxo pipefail
-rsync -avc --delete {str(source_path.name)+os.sep+str(relative_part)} {str(source_path)}
+rsync -av --delete {str(source_path.name)+os.sep+str(relative_part)} {str(source_path)}
 """
         )
     restore_script_path.chmod(restore_script_path.stat().st_mode | 0o755)

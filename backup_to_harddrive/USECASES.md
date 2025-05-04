@@ -103,7 +103,7 @@ backup_configurations:
 `/media/foo/hd1/Backup/timestamp.txt` that contains the timestamp of the backup
  after successful execution.
 
-## UC6: (NOT IMPLEMENTED) warn the user if rsync is not installed
+## UC6: log warning or error if rsync is not installed and prevent execution
 
 * Given a Linux system were `rsync` is not found in the path.
 
@@ -124,6 +124,7 @@ backup_configurations:
    with sudo apt-get install rsync"` shall appear
   * And then no rsync command shall be issue
   * And then backup timestamp shall not be updated
+  * And then the execution shall return 1
 * When the user issue `backup_to_harddrive --switch-on`
   * Then a warning message "Rsync not found in path ! Consider installing rsync
    with sudo apt-get install rsync"` shall appear

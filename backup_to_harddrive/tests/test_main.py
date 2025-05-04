@@ -9,6 +9,12 @@ from backup_to_harddrive.main import main
 
 class TestMainFunction(unittest.TestCase):
 
+    def setUp(self):
+        """Set up the test case."""
+        self.patcher = patch("backup_to_harddrive.main.check_if_rsync_is_installed_and_log_if_not")
+        self.mock_check_rsync = self.patcher.start()
+        self.mock_check_rsync.return_value = True
+
     @patch("backup_to_harddrive.main.run_backup_from_config_file")
     @patch("backup_to_harddrive.main.set_backup_status")
     @patch("backup_to_harddrive.main.argparse.ArgumentParser.parse_args")
@@ -83,3 +89,15 @@ class TestMainFunction(unittest.TestCase):
         mock_run.assert_not_called()
         mock_log_info.assert_not_called()
         mock_is_backup_switched_on.assert_called()
+
+    @patch("logging.error")
+    @patch("backup_to_harddrive.main.is_backup_switched_on")
+    @patch("backup_to_harddrive.main.run_backup_from_config_file")
+    @patch("backup_to_harddrive.main.argparse.ArgumentParser.parse_args")
+    def test_wet_run_rsync_not_installed(self, mock_parse_args, mock_run, mock_is_backup_switched_on, mock_log_error):
+        mock_is_backup_switched_on.return_value = True
+        mock_parse_args.return_value = argparse.Namespace(switch_on=None, switch_off=None)
+        self.mock_check_rsync.return_value = False
+        self.assertEqual(main(), 1)
+        mock_run.assert_not_called()
+        mock_log_error.assert_called()

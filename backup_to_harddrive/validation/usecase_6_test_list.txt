@@ -1,0 +1,2 @@
+test_wet_run_rsync_not_installed
+test_rsync_installed_dry_run_

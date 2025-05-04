@@ -1,5 +1,7 @@
 # backup_to_harddrive
 
+![latest-release](badges/latest-release.svg) ![coverage](badges/coverage.svg) ![python-version](badges/python-version.svg)
+
 This script can typically be trigger when you want to backup files from your
 home folder to one or more backup path (e.g harddrives.)
 

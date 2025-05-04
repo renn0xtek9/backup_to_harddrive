@@ -15,7 +15,7 @@ backup_configurations:
 * Running `backup_to_harddrive` shall trigger
 
 ```bash
-rsync --mkpath --delete --delete-before --update --progress -t -a -r -v -E -c -h
+rsync -av --mkpath --delete --delete-before --update --progress -h
  /home/foo /media/foo/hd1/Backup/$(hostname)/
 ```
 
@@ -36,7 +36,7 @@ backup_configurations:
 * Running `backup_to_harddrive` shall trigger
 
 ```bash
-rsync --mkpath --delete --delete-before --update --progress -t -a -r -v -E -c -h
+rsync -av --mkpath --delete --delete-before --update --progress -h
  --exclude=/home/foo/.cache /home/foo /media/foo/hd1/Backup/$(hostname)/
 ```
 
@@ -69,7 +69,7 @@ backup_configurations:
 * Running `backup_to_harddrive` shall trigger
 
 ```bash
-rsync --mkpath --delete --delete-before --update --progress -t -a -r -v -E -c -h
+rsync -av --mkpath --delete --delete-before --update --progress -h
  --exclude=/home/foo/.cache /home/foo /media/foo/hd1/Backup/$(hostname)/
 ```
 
@@ -79,7 +79,7 @@ rsync --mkpath --delete --delete-before --update --progress -t -a -r -v -E -c -h
 #!/bin/bash
 set -euxo pipefail
 cd "$USER"
-rsync -avc --delete Development /home/foo
+rsync -av --delete Development /home/foo
 ```
 
 * The script `/media/foo/hd1/Backup/$(hostname)/restore_Documents.sh` shall have

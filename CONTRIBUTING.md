@@ -8,7 +8,7 @@ It is recommended VSCode IDE with the *Reopen in container feature*
 ### Basics
 
 - Clean the repository: `git clean -e ".vscode/*" -fxfd`
-- Install package dependencies: **Install dependencies** task of VSCode
+- Install package dependencies: use the **Install dependencies** task of VSCode
 - Run unittest: use the **Unit-tests** task of VSCode.
 You can check code coverage in `output/coverage_report/index.html`
 - Run pylint on the repository: use the **Pylint check** task of VSCode.

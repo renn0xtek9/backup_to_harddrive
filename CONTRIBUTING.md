@@ -16,14 +16,7 @@ You can check code coverage in `output/coverage_report/index.html`
 - Use GUI for testing: `Ctrl+Shift+P` *"Python: Select Interpreter"*,
 use the one from `.cache/pypoetry/...`
 - Build a wheel package: use the **Build package** task of VSCode.
-- Create a new release:
-  - `cd backup_to_harddrive/ && poetry version patch`
-  - note the new version number in [pyproject.toml](backup_to_harddrive/pyproject.toml#L7)
-  (e.g. X.Y.Z)
-  - `git add backup_to_harddrive/pyproject.toml`
-  - `git commit -m release-0.0.3`
-  - `git tag -a release-X.Y.Z`
-  - `git push origin release-X.Y.Z`
+- Create a new release: from branch `master` execute `./processes/create_new_release.sh`
 
 ### Advanced
 

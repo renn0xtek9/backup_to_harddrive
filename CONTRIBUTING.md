@@ -1,6 +1,7 @@
 # Contributing
 
-It is recommended to the *Reopen in container feature*
+It is recommended VSCode IDE with the *Reopen in container feature*
+(devcontainer)
 
 ## Developer how to
 

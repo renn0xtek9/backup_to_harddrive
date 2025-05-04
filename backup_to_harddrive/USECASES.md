@@ -133,3 +133,5 @@ backup_configurations:
   * Then a warning message "Rsync not found in path ! Consider installing rsync
    with sudo apt-get install rsync"` shall appear
   * And then the backup status shall be switch to on
+
+[See test cases](validation/usecase_6_test_list.txt)

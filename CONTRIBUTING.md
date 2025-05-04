@@ -4,6 +4,8 @@ It is recommended to the *Reopen in container feature*
 
 ## Developer how to
 
+### Basics
+
 - Clean the repository: `git clean -e ".vscode/*" -fxfd`
 - Install package dependencies: **Install dependencies** task of VSCode
 - Run unittest: use the **Unit-tests** task of VSCode.
@@ -21,3 +23,9 @@ use the one from `.cache/pypoetry/...`
   - `git commit -m release-0.0.3`
   - `git tag -a release-X.Y.Z`
   - `git push origin release-X.Y.Z`
+
+### Advanced
+
+- Run all tests associated to a given usecase: run **Validate use case**
+task of VSCode and input the correct test list file
+(e.g. `usecase_6_test_list.txt`)

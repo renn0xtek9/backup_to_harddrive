@@ -57,6 +57,14 @@
             }
         },
         {
+            "label": "Validate use case",
+            "type": "shell",
+            "command": "poetry run pytest --cov=. --cov-report html:${workspaceFolder}/output/coverage_report/ -k \"$(awk '{printf \"%s%s\", sep, $0; sep=\" or \"}' /workspaces/backup_to_harddrive/backup_to_harddrive/validation/${input:use_case_test_list} )\"",
+            "options": {
+                "cwd": "${workspaceFolder}/backup_to_harddrive"
+            }
+        },
+        {
             "label": "Format python",
             "type": "shell",
             "command": "poetry run black --config pyproject.toml --check .",
@@ -68,6 +76,14 @@
             "label": "Format everything",
             "type": "shell",
             "command": "pre-commit run --all-files"
+        },
+    ],
+    "inputs": [
+        {
+            "id": "use_case_test_list",
+            "description": "test_list:",
+            "default": "usecase_6_test_list.txt",
+            "type": "promptString",
         },
     ]
 }
